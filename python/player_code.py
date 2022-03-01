@@ -4,8 +4,8 @@ import sys
 
 @dataclass(eq=True, frozen=True, order=True)
 class Position:
-    x: float
-    y: float
+    x: int
+    y: int
 
     def distance_to(self, other: "Position") -> float:
         return ((self.x - other.x) ** 2 + (self.y - other.y) ** 2) ** 0.5
@@ -68,6 +68,8 @@ class Game:
         return position in self.already_spawned_positions
 
     def set_target(self, attacker_id: int, defender_id: int):
+        assert (type(attacker_id)== int)
+        assert (type(defender_id)== int)
         self.player_set_targets[attacker_id] = defender_id
 
     def log(self, line: str):
@@ -155,4 +157,4 @@ def get_all_valid_spawn_positions() -> list[Position]:
     for x in range(Constants.MAP_NO_OF_COLS):
         positions.add(Position(x, 0))
         positions.add(Position(x, Constants.MAP_NO_OF_ROWS - 1))
-    return list(positions)
+    return sorted(list(positions))

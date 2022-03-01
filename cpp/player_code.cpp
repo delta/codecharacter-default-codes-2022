@@ -62,6 +62,7 @@ std::vector<Position> get_all_valid_spawn_positions() {
     all_valid_positions.push_back(
         {i, static_cast<int>(Constants::MAP_NO_OF_ROWS) - 1});
   }
+  sort(all_valid_positions.begin(), all_valid_positions.end());
   return all_valid_positions;
 }
 
