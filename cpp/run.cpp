@@ -64,14 +64,13 @@ Game run(const State &state) {
         // spawn
         // For full information about the Attributes class refer the
         // documentation
+        // This can be used for strategizing
         Attributes attackers_attributes =
             Constants::ATTACKER_TYPE_ATTRIBUTES.at(type_id);
 
         // You can use the logger we provide to show log messages in the
         // rendered game
-        game.logr() << "(" << attackers_attributes.hp << ","
-                    << attackers_attributes.attack_power
-                    << ") to be spawned at Position("
+        game.logr() << "To to be spawned at Position("
                     << all_valid_spawn_positions[last_spawned].get_x() << ","
                     << all_valid_spawn_positions[last_spawned].get_y() << ")"
                     << '\n';

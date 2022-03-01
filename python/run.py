@@ -73,6 +73,7 @@ def run(state: State) -> Game:
                 # rendered game
                 # For full information about the AttackerType class refer the
                 # documentation
+                # This information can be used for strategizing
                 attackers_attributes: AttackerType = Constants.ATTACKER_TYPE_ATTRIBUTES[type_id]
 
                 # You can use the logger we provide to show log messages in the
