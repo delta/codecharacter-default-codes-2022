@@ -1,9 +1,9 @@
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Set;
 
 public class Helpers {
     public static Set<Position> getAllValidSpawnPositions() {
-        Set<Position> allValidSpawnPositions = new HashSet<Position>();
+        Set<Position> allValidSpawnPositions = new TreeSet<Position>();
 
         for (int y = 0; y < Constants.MAP_NO_OF_ROWS; y++) {
             allValidSpawnPositions.add(new Position(0, y));
