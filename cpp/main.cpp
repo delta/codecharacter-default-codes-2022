@@ -40,9 +40,11 @@ void output(State &state, Game &game) {
 
   // Player logs are logged to cerr, so that driver will collect it
   game.logr().flush();
-  std::cerr << "TURN " << state.get_turn_no() << '\n';
-  std::cerr << game.logr().view() << '\n';
-  std::cerr << "ENDLOG" << std::endl;
+  if (!game.logr().view().empty()) {
+    std::cerr << "TURN " << state.get_turn_no() << '\n';
+    std::cerr << game.logr().view() << '\n';
+    std::cerr << "ENDLOG" << std::endl;
+  }
 
   // Game details logged
   const auto &spawn_positions = game.get_spawn_positions();

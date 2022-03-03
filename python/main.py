@@ -4,7 +4,7 @@ from run import Position, Attacker, Defender, Constants, Map, State, Game, run
 
 def output(state: State, game: Game):
     log_line = game.get_log()
-    if log_line:
+    if log_line and len(log_line)!=0:
         sys.stderr.write(f"TURN {state.turn_no}\n")
         sys.stderr.write(log_line)
         sys.stderr.write(f"ENDLOG\n")
