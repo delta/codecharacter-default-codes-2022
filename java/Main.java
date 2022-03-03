@@ -46,9 +46,11 @@ public class Main {
 
         String log = game.getLog();
 
-        System.err.println("TURN " + state.getTurnNo());
-        System.err.println(log);
-        System.err.println("ENDLOG");
+        if (!log.isEmpty()) {
+            System.err.println("TURN " + state.getTurnNo());
+            System.err.println(log);
+            System.err.println("ENDLOG");
+        }
 
         List<SpawnDetail> spawnPositions = game.getSpawnPositions();
 
