@@ -10,9 +10,9 @@
 #include <vector>
 
 Attributes::Attributes(unsigned hp, unsigned range, unsigned attack_power,
-                       unsigned speed, unsigned price)
+                       unsigned speed, unsigned price, unsigned is_aerial)
     : hp(hp), range(range), attack_power(attack_power), speed(speed),
-      price(price) {}
+      price(price), is_aerial(is_aerial) {}
 
 Position::Position(int x, int y) : _x(x), _y(y) {}
 
