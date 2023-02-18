@@ -74,14 +74,14 @@ public class Main {
         Constants.ATTACKER_TYPE_ATTRIBUTES = new HashMap<Integer, Attributes>();
         for (int i = 1; i <= Constants.NO_OF_ATTACKER_TYPES; i++) {
             Constants.ATTACKER_TYPE_ATTRIBUTES.put(i,
-                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
+                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
         }
 
         Constants.NO_OF_DEFENDER_TYPES = in.nextInt();
         Constants.DEFENDER_TYPE_ATTRIBUTES = new HashMap<Integer, Attributes>();
         for (int i = 1; i <= Constants.NO_OF_DEFENDER_TYPES; i++) {
             Constants.DEFENDER_TYPE_ATTRIBUTES.put(i,
-                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
+                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
         }
 
         GameMap map = getInitialMap();
