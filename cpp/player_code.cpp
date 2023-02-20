@@ -93,6 +93,21 @@ const std::vector<Defender> &State::get_defenders() const {
 size_t State::get_turn_no() const { return this->_turn_no; }
 size_t State::get_coins_left() const { return this->_no_of_coins_left; }
 
+PvPState::PvPState(std::vector<Attacker> attackers,
+             size_t no_of_coins_left, size_t turn_no)
+    : _turn_no(turn_no), _no_of_coins_left(no_of_coins_left),
+      _attackers(std::move(attackers)) {}
+
+const std::vector<Attacker> &PvPState::get_attackers() const {
+  return this->_attackers;
+}
+
+const std::vector<Attacker> &PvPState::get_opponent_attackers() const {
+  return this->_opponent_attackers;
+}
+size_t PvPState::get_turn_no() const { return this->_turn_no; }
+size_t PvPState::get_coins_left() const { return this->_no_of_coins_left; }
+
 Game::Game() {}
 
 void Game::spawn_attacker(size_t id, Position pos) {
@@ -107,6 +122,10 @@ void Game::set_target(size_t attacker_id, size_t defender_id) {
 }
 void Game::set_target(const Attacker &attacker, const Defender &defender) {
   this->_player_set_targets.insert({attacker.get_id(), defender.get_id()});
+}
+
+void Game::set_target(const Attacker &attacker, const Attacker &opponent) {
+  this->_player_set_targets.insert({attacker.get_id(), opponent.get_id()});
 }
 
 std::ostringstream &Game::logr() { return this->_logr; }

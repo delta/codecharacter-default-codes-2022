@@ -94,10 +94,26 @@ private:
   std::vector<Defender> _defenders;
 };
 
+class PvPState {
+public:
+  PvPState(std::vector<Attacker> attackers, size_t no_of_coins_left, size_t turn_no);
+
+  const std::vector<Attacker> &get_attackers() const;
+  const std::vector<Attacker> &get_opponent_attackers() const;
+  size_t get_turn_no() const;
+  size_t get_coins_left() const;
+private:
+  size_t _turn_no;
+  size_t _no_of_coins_left;
+  std::vector<Attacker> _attackers;
+  std::vector<Attacker> _opponent_attackers;
+};
+
 class Game {
   std::unordered_map<size_t, size_t> _player_set_targets;
   std::vector<std::pair<size_t, Position>> _spawn_postions;
   std::set<Position> _already_spawned_positions;
+  
   std::ostringstream _logr;
 
 public:
@@ -106,6 +122,7 @@ public:
   bool already_spawned_at_position(Position pos);
   void set_target(size_t attacker_id, size_t defender_id);
   void set_target(const Attacker &attacker, const Defender &defender);
+  void set_target(const Attacker &attacker, const Attacker &opponent);
   std::ostringstream &logr();
 
   const std::unordered_map<size_t, size_t> &get_player_set_targets() const;
@@ -129,5 +146,6 @@ private:
 };
 
 Game run(const State &state);
+Game run(const PvPState &state);
 
 #define logger game.logr()
