@@ -13,8 +13,9 @@ struct Attributes {
   const unsigned attack_power;
   const unsigned speed;
   const unsigned price;
+  const unsigned is_aerial;
   Attributes(unsigned hp, unsigned range, unsigned attack_power, unsigned speed,
-             unsigned price);
+             unsigned price, unsigned is_aerial);
 };
 
 struct Constants {

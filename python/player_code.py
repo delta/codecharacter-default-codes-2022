@@ -17,6 +17,7 @@ class ActorType:
     range: int
     attack_power: int
     price: int
+    is_aerial: int
 
 
 @dataclass(frozen=True)
@@ -98,17 +99,17 @@ class Constants:
         cls.NO_OF_ATTACKER_TYPES = int(input())
         cls.ATTACKER_TYPE_ATTRIBUTES = {}
         for i in range(1, cls.NO_OF_ATTACKER_TYPES + 1):
-            hp, a_range, attack_power, speed, price = map(int, input().split())
+            hp, a_range, attack_power, speed, price, is_aerial = map(int, input().split())
             cls.ATTACKER_TYPE_ATTRIBUTES[i] = AttackerType(
-                hp, a_range, attack_power, price, speed
+                hp, a_range, attack_power, price, is_aerial, speed
             )
 
         cls.NO_OF_DEFENDER_TYPES = int(input())
         cls.DEFENDER_TYPE_ATTRIBUTES = {}
         for i in range(1, cls.NO_OF_DEFENDER_TYPES + 1):
-            hp, d_range, attack_power, _, price = map(int, input().split())
+            hp, d_range, attack_power, _, price, is_aerial = map(int, input().split())
             cls.DEFENDER_TYPE_ATTRIBUTES[i] = DefenderType(
-                hp, d_range, attack_power, price
+                hp, d_range, attack_power, price, is_aerial
             )
 
 

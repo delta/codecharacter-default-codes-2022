@@ -9,10 +9,10 @@ void init_constants() {
 
   std::unordered_map<size_t, Attributes> attacker_type_to_attributes;
   for (size_t i = 1; i <= Constants::NO_OF_ATTACKER_TYPES; i++) {
-    unsigned hp, range, attack_power, speed, price;
-    std::cin >> hp >> range >> attack_power >> speed >> price;
+    unsigned hp, range, attack_power, speed, price, is_aerial;
+    std::cin >> hp >> range >> attack_power >> speed >> price >> is_aerial;
     attacker_type_to_attributes.insert(
-        std::make_pair(i, Attributes(hp, range, attack_power, speed, price)));
+        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial)));
   }
   Constants::ATTACKER_TYPE_ATTRIBUTES = attacker_type_to_attributes;
 
@@ -21,10 +21,10 @@ void init_constants() {
 
   std::unordered_map<size_t, Attributes> defender_type_to_attributes;
   for (size_t i = 1; i <= Constants::NO_OF_DEFENDER_TYPES; i++) {
-    unsigned hp, range, attack_power, speed, price;
-    std::cin >> hp >> range >> attack_power >> speed >> price;
+    unsigned hp, range, attack_power, speed, price, is_aerial;
+    std::cin >> hp >> range >> attack_power >> speed >> price >> is_aerial;
     defender_type_to_attributes.insert(
-        std::make_pair(i, Attributes(hp, range, attack_power, speed, price)));
+        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial)));
   }
   Constants::DEFENDER_TYPE_ATTRIBUTES = defender_type_to_attributes;
 }
