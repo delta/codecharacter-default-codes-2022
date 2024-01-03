@@ -1,40 +1,64 @@
 #include "player_code.h"
 
+#include <fstream>
+
 // This initial code is well commented and serves as a small tutorial for game
 // APIs, for more information you can refer to the documentation
 
 // This is the function player has to fill
 // You can define any new functions here that you want
-Game run(const State &state) {
+Game run(const PvPState &state, std::ofstream &fs3) {
+
+  fs3 << "from runpvp\n";
+  fs3.flush();
 
   // Always start by instantiating a Game class object
   Game game;
 
   size_t remaining_coins = state.get_coins_left();
 
-  game.logr() << "TURN " << state.get_turn_no() << " LOGS:";
+  fs3 << "Coins left: " << remaining_coins << "\n";
+  fs3.flush();
+
+  fs3 << "TURN " << state.get_turn_no() << " LOGS:";
+  fs3.flush();
+
+  // game.logr() << "TURN " << state.get_turn_no() << " LOGS:";
 
   // Get all the attackers and defenders in the game and store it
   const std::vector<Attacker> &attackers = state.get_attackers();
-  const std::vector<Defender> &defenders = state.get_defenders();
+  fs3 << "attackers.size() = " << attackers.size() << "\n";
+  fs3.flush();
+  const std::vector<Attacker> &opponent_attackers = state.get_opponent_attackers();
+  fs3 << "opponent_attackers.size() = " << opponent_attackers.size() << "\n";
+  fs3.flush();
 
   // The function get_all_valid_spawn_positions() is a helper which will give us
   // the list of valid spawn positions in map.
   // If the position  we're spawning is not one of these, the player will be
   // penalized by deducting the spawn cost but not spawning the attacker
-  std::vector<Position> all_valid_spawn_positions =
-      get_all_valid_spawn_positions();
+  std::vector<Position> all_valid_spawn_positions = get_all_valid_spawn_positions();
 
+  fs3 << "from run pvp all_valid_spawn_positions.size() = " << all_valid_spawn_positions.size() << "\n";
+  fs3.flush();
   // Lets say I want to spawn an attacker of each of the type in one turn
   // and I want to use the all_valid_spawn_positions list as well. In order to
   // keep traack of the last index in the list that we spawned at, we can use a
   // static variable in c++
 
+  // fs.flush();
+
   static int last_spawned = 0;
 
-  // If there's no defenders left,we can stop spawning and save up on coins,
-  // which are important for boosting game score
-  if (!defenders.empty()) {
+  if(state.get_turn_no() == 0) {
+        int x = 35;
+        // Spawn the attacker of type_id at position
+        game.spawn_attacker(1, Position(x, 0));
+  }
+
+  if (!opponent_attackers.empty()) {
+    fs3 << "opponent_attackers.size() = " << opponent_attackers.size() << "\n";
+    fs3.flush();
     for (size_t type_id = 1; type_id <= Constants::NO_OF_ATTACKER_TYPES;
          type_id++) {
       // Spawn the attacker of type_id at position
@@ -44,7 +68,7 @@ Game run(const State &state) {
       //    - Spawning at invalid position
       //    - Spawning at position where you have already spawned one attacker
       //    in the same turn
-      //
+      
       // We have provided helpers to check just that
 
       // game class will keep track of all your spawned positions for you and
@@ -70,30 +94,33 @@ Game run(const State &state) {
 
         // You can use the logger we provide to show log messages in the
         // rendered game
-        game.logr() << "To to be spawned at Position("
-                    << all_valid_spawn_positions[last_spawned].get_x() << ","
-                    << all_valid_spawn_positions[last_spawned].get_y() << ")"
-                    << '\n';
+        // game.logr() << "To to be spawned at Position("
+        //             << all_valid_spawn_positions[last_spawned].get_x() << ","
+        //             << all_valid_spawn_positions[last_spawned].get_y() << ")"
+        //             << '\n';
         (last_spawned += 1) %= all_valid_spawn_positions.size();
       }
     }
   }
 
   // Now lets say you always want to set the target for the attackers[0] to
-  // defenders[0]
+  //opponent_attackers[0]
   // To do that you do
-  if (!attackers.empty() && !defenders.empty()) {
+  if (!attackers.empty() && !opponent_attackers.empty()) {
     // check if they are empty beforehand to be safe from unexpected errors
-    game.set_target(attackers.front(), defenders.front());
+    game.set_target(attackers.front(), opponent_attackers.front());
+    fs3 << "set target for attacker id " << attackers.front().get_id() << " to defender id " << opponent_attackers.front().get_id() << "\n";
+    fs3.flush();
   }
 
   // Lets log all the spawned positions for this turn
   for (auto &[type_id, pos] : game.get_spawn_positions()) {
     // you can use logger macro as well, which is an alias for game.logr()
-    logger << "Type " << type_id << " at Position (" << pos.get_x() << ","
-           << pos.get_y() << ")\n";
+    // logger << "Type " << type_id << " at Position (" << pos.get_x() << ","
+    //        << pos.get_y() << ")\n";
   }
-
+  fs3 << "size of spawn pos "<<game.get_spawn_positions().size() << "\n";
+  fs3.flush();
   // always  return the game object
   return game;
 }
