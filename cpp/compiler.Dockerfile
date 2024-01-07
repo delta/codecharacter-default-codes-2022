@@ -1,6 +1,6 @@
 FROM gcc:latest
 
-WORKDIR /pvp_game/player_1
+WORKDIR /player_code
 
 COPY *.cpp *.h Makefile ./
 

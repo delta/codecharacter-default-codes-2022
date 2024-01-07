@@ -6,7 +6,6 @@
 #include <sstream>
 #include <unordered_map>
 #include <vector>
-#include <fstream>
 
 struct Attributes {
   const unsigned hp;
@@ -20,8 +19,8 @@ struct Attributes {
 };
 
 struct Constants {
-static inline size_t MAP_NO_OF_ROWS;
-static inline size_t MAP_NO_OF_COLS;
+static inline size_t MAP_NO_OF_ROWS = 64;
+static inline size_t MAP_NO_OF_COLS = 64;
 static inline size_t NO_OF_DEFENDER_TYPES;
 static inline size_t NO_OF_ATTACKER_TYPES;
 static inline size_t NO_OF_TURNS;
@@ -97,9 +96,8 @@ private:
 
 class PvPState {
 public:
-  PvPState(std::vector<Attacker> attackers,
-           std::vector<Attacker> opponent_attackers,
-           size_t no_of_coins_left, size_t turn_no);
+  PvPState(std::vector<Attacker> attackers,std::vector<Attacker> opponent_attackers, size_t no_of_coins_left, size_t turn_no);
+
   const std::vector<Attacker> &get_attackers() const;
   const std::vector<Attacker> &get_opponent_attackers() const;
   size_t get_turn_no() const;
@@ -140,14 +138,14 @@ public:
 
   [[nodiscard]] std::vector<Defender> spawn_defenders() const;
 
-  static inline size_t no_of_rows;
-  static inline size_t no_of_cols;
+  static inline size_t no_of_rows = 64;
+  static inline size_t no_of_cols = 64;
 
 private:
   std::vector<std::vector<int>> _grid;
 };
 
 Game run(const State &state);
-Game run(const PvPState &state, std::ofstream &fs);
+Game run(const PvPState &state);
 
 #define logger game.logr()

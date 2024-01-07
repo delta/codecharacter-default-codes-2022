@@ -1,4 +1,4 @@
-#include "../player_code.h"
+#include "player_code.h"
 
 // This initial code is well commented and serves as a small tutorial for game
 // APIs, for more information you can refer to the documentation

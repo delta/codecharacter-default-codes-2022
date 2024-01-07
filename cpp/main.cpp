@@ -1,4 +1,4 @@
-#include "../player_code.h"
+#include "player_code.h"
 
 void init_constants() {
 
@@ -36,12 +36,12 @@ Map get_initial_map() {
   return map;
 }
 
-void output(State &state, Game &game) {
+void output(size_t turn_no, Game &game) {
 
   // Player logs are logged to cerr, so that driver will collect it
   game.logr().flush();
   if (!game.logr().view().empty()) {
-    std::cerr << "TURN " << state.get_turn_no() << '\n';
+    std::cerr << "TURN " << turn_no << '\n';
     std::cerr << game.logr().view() << '\n';
     std::cerr << "ENDLOG" << std::endl;
   }
@@ -63,6 +63,8 @@ void output(State &state, Game &game) {
 }
 
 void dump_logs(State &state, Game &game) {}
+
+void dump_logs(PvPState& state, Game &game) {}
 
 State next_state(size_t cur_turn_no) {
   size_t no_of_active_defenders;
@@ -90,19 +92,86 @@ State next_state(size_t cur_turn_no) {
   return {move(attackers), move(defenders), coins_left, cur_turn_no + 1};
 }
 
-int main() {
+PvPState pvp_next_state(size_t cur_turn_no) {
+  size_t no_of_active_attackers;
+  size_t no_of_opponent_attackers;
+
+  std::cin >> no_of_active_attackers;
+  std::vector<Attacker> attackers;
+  for (size_t i = 0; i < no_of_active_attackers; i++) {
+    size_t id, hp, x, y, type;
+    std::cin >> id >> x >> y >> type >> hp;
+    attackers.push_back(Attacker(id, hp, type, Position(x, y)));
+  }
+
+  std::cin >> no_of_opponent_attackers;
+  std::vector<Attacker> opponent_attackers;
+  for (size_t i = 0; i < no_of_opponent_attackers; i++) {
+    size_t id, hp, x, y, type;
+    std::cin >> id >> x >> y >> type >> hp;
+    opponent_attackers.push_back(Attacker(id, hp, type, Position(x, y)));
+  }
+
+  size_t coins_left;
+  std::cin >> coins_left;
+
+  return {move(attackers), move(opponent_attackers), coins_left, cur_turn_no + 1};
+}
+
+enum class GameType {
+  NORMAL,
+  PVP
+};
+
+GameType string_to_game_type(std::string type) {
+  if (type == std::string("normal")) {
+    return GameType::NORMAL;
+  } else {
+    return GameType::PVP;
+  }
+}
+
+int main(int argc, char** argv) {
+  
+  if (argc < 2) {
+    std::cerr << "Usage: " << argv[0] << " [game-type]\n";
+    exit(1);
+  }
+
   init_constants();
-  Map initial_map = get_initial_map();
 
-  State state({}, initial_map.spawn_defenders(), Constants::MAX_NO_OF_COINS, 0);
+  auto gameType = string_to_game_type(std::string(argv[1]));
 
-  auto game = run(state);
+  switch (gameType) {
+    case GameType::NORMAL: {
+      Map initial_map = get_initial_map();
+      State state({}, initial_map.spawn_defenders(), Constants::MAX_NO_OF_COINS, 0);
 
-  output(state, game);
+      auto game = run(state);
+      output(state.get_turn_no(), game);
 
-  for (size_t i = 0; i < Constants::NO_OF_TURNS; i++) {
-    state = next_state(state.get_turn_no());
-    game = run(state);
-    output(state, game);
+      for (size_t i = 0; i < Constants::NO_OF_TURNS; i++) {
+        state = next_state(state.get_turn_no());
+        game = run(state);
+        output(state.get_turn_no(), game);
+      }
+      
+      break;
+    }
+
+    case GameType::PVP: {
+      PvPState state({},{},Constants::MAX_NO_OF_COINS, 0);
+
+      auto game = run(state);
+      output(state.get_turn_no(), game);
+
+      for (size_t i = 0; i < Constants::NO_OF_TURNS; i++) {
+        state = pvp_next_state(state.get_turn_no());
+        game = run(state);
+        output(state.get_turn_no(), game);
+      }
+
+      break;
+    }
   }
 }

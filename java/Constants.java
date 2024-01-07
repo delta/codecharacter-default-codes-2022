@@ -1,8 +1,8 @@
 import java.util.Map;
 
 public class Constants {
-    public static int MAP_NO_OF_ROWS;
-    public static int MAP_NO_OF_COLS;
+    public static int MAP_NO_OF_ROWS = 64;
+    public static int MAP_NO_OF_COLS = 64;
     public static int NO_OF_DEFENDER_TYPES;
     public static int NO_OF_ATTACKER_TYPES;
     public static int NO_OF_TURNS;

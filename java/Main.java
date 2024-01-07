@@ -8,6 +8,23 @@ public class Main {
 
     private static final Scanner in = new Scanner(System.in);
 
+    private enum GameType {
+        NORMAL,PVP
+    }
+
+    private static GameType stringToGameType(String gameType) {
+        switch (gameType.toLowerCase()) {
+            case "normal":
+                return GameType.NORMAL;
+            case "pvp":
+                return GameType.PVP;
+            default:
+                System.err.println("Usage: java Main [game-type]");
+                System.exit(1);
+        }
+        return GameType.NORMAL;
+    }
+
     private static State nextState(int currentTurnNo) {
         int noOfActiveAttackers = in.nextInt();
         List<Attacker> attackers = new ArrayList<>();
@@ -28,6 +45,26 @@ public class Main {
         return new State(attackers, defenders, coinsLeft, currentTurnNo + 1);
     }
 
+    private static PvPState nextPvPState(int currentTurnNo) {
+        int noOfActiveAttackers = in.nextInt();
+        List<Attacker> attackers = new ArrayList<>();
+        for (int i = 0; i < noOfActiveAttackers; i++) {
+            attackers.add(
+                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt())));
+        }
+
+        int noOfActiveOpponentAttackers = in.nextInt();
+        List<Attacker> opponentAttackers = new ArrayList<>();
+        for (int i = 0; i < noOfActiveOpponentAttackers; i++) {
+            opponentAttackers.add(
+                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt())));
+        }
+
+        int coinsLeft = in.nextInt();
+
+        return new PvPState(attackers, opponentAttackers, coinsLeft, currentTurnNo + 1);
+    }
+
     private static GameMap getInitialMap() {
         Constants.MAP_NO_OF_ROWS = in.nextInt();
         Constants.MAP_NO_OF_COLS = in.nextInt();
@@ -42,12 +79,12 @@ public class Main {
         return new GameMap(grid);
     }
 
-    private static void output(State state, Game game) {
+    private static void output(int turnNo, Game game) {
 
         String log = game.getLog();
 
         if (!log.isEmpty()) {
-            System.err.println("TURN " + state.getTurnNo());
+            System.err.println("TURN " + turnNo);
             System.err.println(log);
             System.err.println("ENDLOG");
         }
@@ -67,6 +104,14 @@ public class Main {
     }
 
     public static void main(String[] args) {
+
+        if(args.length < 1) {
+            System.err.println("Usage: java Main [game-type]");
+            System.exit(1);
+        }
+
+        GameType gameType = stringToGameType(args[0]);
+
         Constants.NO_OF_TURNS = in.nextInt();
         Constants.MAX_NO_OF_COINS = in.nextInt();
 
@@ -84,21 +129,38 @@ public class Main {
                     new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
         }
 
-        GameMap map = getInitialMap();
-        List<Defender> defenders = map.spawnDefenders();
+        if(gameType == GameType.NORMAL){
 
-        State state = new State(new ArrayList<>(), defenders, Constants.MAX_NO_OF_COINS, 0);
+            GameMap map = getInitialMap();
+            List<Defender> defenders = map.spawnDefenders();
 
-        Run run = new Run();
-        Game game = run.run(state);
-        output(state, game);
+            State state = new State(new ArrayList<>(), defenders, Constants.MAX_NO_OF_COINS, 0);
 
-        for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
-            state = nextState(state.getTurnNo());
-            game = run.run(state);
-            output(state, game);
+            Run run = new Run();
+            Game game = run.run(state);
+            output(state.getTurnNo(), game);
+
+            for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
+                state = nextState(state.getTurnNo());
+                game = run.run(state);
+                output(state.getTurnNo(), game);
+            }
+
+            in.close();
         }
 
-        in.close();
+        else{
+
+            PvPState state = new PvPState(new ArrayList<>(), new ArrayList<>(), Constants.MAX_NO_OF_COINS, 0);
+            RunPvP run = new RunPvP();
+            Game game = run.run(state);
+            output(state.getTurnNo(), game);
+
+            for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
+                state = nextPvPState(state.getTurnNo());
+                game = run.run(state);
+                output(state.getTurnNo(), game);
+            }
+        }
     }
 }

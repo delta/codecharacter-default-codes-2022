@@ -53,6 +53,12 @@ class State:
     no_of_coins_left: int
     turn_no: int
 
+@dataclass(frozen=True)
+class PvPState:
+    attackers: list[Attacker]
+    opponent_attackers: list[Attacker]
+    no_of_coins_left: int
+    turn_no: int
 
 class Game:
     def __init__(self):
@@ -95,6 +101,8 @@ class Constants:
 
     @classmethod
     def initialize(cls):
+        cls.MAP_NO_OF_ROWS = 64
+        cls.MAP_NO_OF_COLS = 64
         cls.NO_OF_TURNS, cls.MAX_NO_OF_COINS = map(int, input().split())
         cls.NO_OF_ATTACKER_TYPES = int(input())
         cls.ATTACKER_TYPE_ATTRIBUTES = {}

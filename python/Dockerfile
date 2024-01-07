@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/python3-debian12
+FROM gcr.io/distroless/python3-debian11
 
 ENV PYTHONUNBUFFERED=x
 
