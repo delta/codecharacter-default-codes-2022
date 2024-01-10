@@ -1,7 +1,5 @@
 #include "player_code.h"
 
-#include <fstream>
-
 std::ostringstream all_logs;
 
 void init_constants() {
@@ -176,7 +174,7 @@ int main(int argc, char** argv) {
 
       break;
     }
-    // sending logs to driver
-    std::cerr << all_logs.str() << std::endl;
   }
+
+  std::cerr << all_logs.str() << std::endl;
 }

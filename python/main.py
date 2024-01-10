@@ -4,6 +4,8 @@ from run import run
 from runpvp import run_pvp
 from enum import Enum
 
+all_logs: str = ""
+
 class GameType(Enum):
     NORMAL = 1
     PVP = 2
@@ -18,9 +20,10 @@ def string_to_game_type(game_type_str) -> GameType:
 def output(turn_no: int, game: Game):
     log_line = game.get_log()
     if log_line and len(log_line)!=0:
-        sys.stderr.write(f"TURN {turn_no}\n")
-        sys.stderr.write(log_line)
-        sys.stderr.write(f"ENDLOG\n")
+        global all_logs
+        all_logs += "TURN " + str(turn_no) + "\n"
+        all_logs += log_line
+        all_logs += "ENDLOG\n"
 
     sys.stdout.write(f"{len(game.spawn_positions)}\n")
     for id, position in game.spawn_positions:
@@ -112,3 +115,5 @@ elif game_type == GameType.PVP:
         state = next_pvp_state(state.turn_no)
         game = run_pvp(state)
         output(state.turn_no, game)
+
+sys.stderr.write(all_logs)

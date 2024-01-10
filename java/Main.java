@@ -7,7 +7,9 @@ import java.util.Scanner;
 public class Main {
 
     private static final Scanner in = new Scanner(System.in);
-
+    
+    private static final StringBuilder allLogs = new StringBuilder();
+    
     private enum GameType {
         NORMAL,PVP
     }
@@ -84,9 +86,9 @@ public class Main {
         String log = game.getLog();
 
         if (!log.isEmpty()) {
-            System.err.println("TURN " + turnNo);
-            System.err.println(log);
-            System.err.println("ENDLOG");
+            allLogs.append("TURN " + turnNo + "\n");
+            allLogs.append(log + "\n");
+            allLogs.append("ENDLOG\n");
         }
 
         List<SpawnDetail> spawnPositions = game.getSpawnPositions();
@@ -129,38 +131,43 @@ public class Main {
                     new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
         }
 
-        if(gameType == GameType.NORMAL){
+        switch (gameType) {
 
-            GameMap map = getInitialMap();
-            List<Defender> defenders = map.spawnDefenders();
+            case NORMAL:
+                
+                GameMap map = getInitialMap();
+                List<Defender> defenders = map.spawnDefenders();
 
-            State state = new State(new ArrayList<>(), defenders, Constants.MAX_NO_OF_COINS, 0);
+                State state = new State(new ArrayList<>(), defenders, Constants.MAX_NO_OF_COINS, 0);
 
-            Run run = new Run();
-            Game game = run.run(state);
-            output(state.getTurnNo(), game);
-
-            for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
-                state = nextState(state.getTurnNo());
-                game = run.run(state);
+                Run run = new Run();
+                Game game = run.run(state);
                 output(state.getTurnNo(), game);
-            }
 
-            in.close();
+                for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
+                    state = nextState(state.getTurnNo());
+                    game = run.run(state);
+                    output(state.getTurnNo(), game);
+                }
+
+                in.close();
+                break;
+            
+            case PVP:
+
+                PvPState pvpState = new PvPState(new ArrayList<>(), new ArrayList<>(), Constants.MAX_NO_OF_COINS, 0);
+                RunPvP runPvP = new RunPvP();
+                Game pvpGame = runPvP.run(pvpState);
+                output(pvpState.getTurnNo(), pvpGame);
+
+                for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
+                    pvpState = nextPvPState(pvpState.getTurnNo());
+                    pvpGame = runPvP.run(pvpState);
+                    output(pvpState.getTurnNo(), pvpGame);
+                }
+                break; 
         }
 
-        else{
-
-            PvPState state = new PvPState(new ArrayList<>(), new ArrayList<>(), Constants.MAX_NO_OF_COINS, 0);
-            RunPvP run = new RunPvP();
-            Game game = run.run(state);
-            output(state.getTurnNo(), game);
-
-            for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
-                state = nextPvPState(state.getTurnNo());
-                game = run.run(state);
-                output(state.getTurnNo(), game);
-            }
-        }
+        System.err.println(allLogs.toString());
     }
 }
