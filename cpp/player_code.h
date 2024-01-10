@@ -123,6 +123,7 @@ public:
   void set_target(size_t attacker_id, size_t defender_id);
   void set_target(const Attacker &attacker, const Defender &defender);
   void set_target(const Attacker &attacker, const Attacker &opponent);
+  void clear_logs();
   std::ostringstream &logr();
 
   const std::unordered_map<size_t, size_t> &get_player_set_targets() const;

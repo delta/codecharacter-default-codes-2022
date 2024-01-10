@@ -37,12 +37,22 @@ Map get_initial_map() {
 }
 
 void output(size_t turn_no, Game &game) {
+  // std::cerr.setf(std::ios::unitbuf);
+  // std::cout.setf(std::ios::unitbuf);
+  // std::clog.setf(std::ios::unitbuf);
+
+  //  std::ios_base::sync_with_stdio(false);
+  
+  //   constexpr std::size_t buffer_size = 1024*1024*1024*102; // Set your desired buffer size
+  //   char err_buffer[buffer_size];
+  //   std::setvbuf(stderr, err_buffer, _IOFBF, buffer_size);
 
   // Player logs are logged to cerr, so that driver will collect it
   game.logr().flush();
+  game.clear_logs();
   if (!game.logr().view().empty()) {
-    std::cerr << "TURN " << turn_no << '\n';
-    std::cerr << game.logr().view() << '\n';
+    std::cerr << "TURN " << turn_no << std::endl;
+    std::cerr << game.logr().view() << std::endl;
     std::cerr << "ENDLOG" << std::endl;
   }
 

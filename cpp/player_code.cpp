@@ -130,6 +130,11 @@ void Game::set_target(const Attacker &attacker, const Attacker &opponent) {
 
 std::ostringstream &Game::logr() { return this->_logr; }
 
+void Game::clear_logs() { 
+  this->_logr.str("");
+  this->_logr.clear();
+}
+
 const std::unordered_map<size_t, size_t> &Game::get_player_set_targets() const {
   return this->_player_set_targets;
 }
