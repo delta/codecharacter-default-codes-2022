@@ -110,12 +110,6 @@ private:
 };
 
 class Game {
-  std::unordered_map<size_t, size_t> _player_set_targets;
-  std::vector<std::pair<size_t, Position>> _spawn_postions;
-  std::set<Position> _already_spawned_positions;
-  
-  std::ostringstream _logr;
-
 public:
   Game();
   void spawn_attacker(size_t id, Position pos);
@@ -123,12 +117,17 @@ public:
   void set_target(size_t attacker_id, size_t defender_id);
   void set_target(const Attacker &attacker, const Defender &defender);
   void set_target(const Attacker &attacker, const Attacker &opponent);
-  void clear_logs();
   std::ostringstream &logr();
 
   const std::unordered_map<size_t, size_t> &get_player_set_targets() const;
   const std::vector<std::pair<size_t, Position>> &get_spawn_positions() const;
   const std::set<Position> &get_already_spawned_positions() const;
+private:
+  std::unordered_map<size_t, size_t> _player_set_targets;
+  std::vector<std::pair<size_t, Position>> _spawn_postions;
+  std::set<Position> _already_spawned_positions;
+  
+  std::ostringstream _logr;
 };
 
 class Map {
