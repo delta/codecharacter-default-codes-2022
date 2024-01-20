@@ -3,18 +3,15 @@
 std::ostringstream all_logs;
 
 void init_constants() {
-
-  std::cin >> Constants::NO_OF_TURNS >> Constants::MAX_NO_OF_COINS;
-
   // All the attacker types
   std::cin >> Constants::NO_OF_ATTACKER_TYPES;
 
   std::unordered_map<size_t, Attributes> attacker_type_to_attributes;
   for (size_t i = 1; i <= Constants::NO_OF_ATTACKER_TYPES; i++) {
-    unsigned hp, range, attack_power, speed, price, is_aerial;
-    std::cin >> hp >> range >> attack_power >> speed >> price >> is_aerial;
+    unsigned hp, range, attack_power, speed, price, is_aerial , weight;
+    std::cin >> hp >> range >> attack_power >> speed >> price >> is_aerial >> weight;
     attacker_type_to_attributes.insert(
-        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial)));
+        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial,weight)));
   }
   Constants::ATTACKER_TYPE_ATTRIBUTES = attacker_type_to_attributes;
 
@@ -26,7 +23,7 @@ void init_constants() {
     unsigned hp, range, attack_power, speed, price, is_aerial;
     std::cin >> hp >> range >> attack_power >> speed >> price >> is_aerial;
     defender_type_to_attributes.insert(
-        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial)));
+        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial,0)));
   }
   Constants::DEFENDER_TYPE_ATTRIBUTES = defender_type_to_attributes;
 }
@@ -113,10 +110,7 @@ PvPState pvp_next_state(size_t cur_turn_no) {
     opponent_attackers.push_back(Attacker(id, hp, type, Position(x, y)));
   }
 
-  size_t coins_left;
-  std::cin >> coins_left;
-
-  return {move(attackers), move(opponent_attackers), coins_left, cur_turn_no + 1};
+  return {move(attackers), move(opponent_attackers), Constants::PVP_FIXED_COINS, cur_turn_no + 1};
 }
 
 enum class GameType {
@@ -139,12 +133,12 @@ int main(int argc, char** argv) {
     exit(1);
   }
 
-  init_constants();
-
   auto gameType = string_to_game_type(std::string(argv[1]));
 
   switch (gameType) {
     case GameType::NORMAL: {
+      std::cin >> Constants::NO_OF_TURNS >> Constants::MAX_NO_OF_COINS;
+      init_constants();
       Map initial_map = get_initial_map();
       State state({}, initial_map.spawn_defenders(), Constants::MAX_NO_OF_COINS, 0);
 
@@ -161,7 +155,9 @@ int main(int argc, char** argv) {
     }
 
     case GameType::PVP: {
-      PvPState state({},{},Constants::MAX_NO_OF_COINS, 0);
+      std::cin >> Constants::NO_OF_TURNS >> Constants::PVP_FIXED_COINS;
+      init_constants();
+      PvPState state({},{},Constants::PVP_FIXED_COINS, 0);
 
       auto game = run(state);
       output(state.get_turn_no(), game);

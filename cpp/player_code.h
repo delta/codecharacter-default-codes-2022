@@ -14,8 +14,9 @@ struct Attributes {
   const unsigned speed;
   const unsigned price;
   const unsigned is_aerial;
+  const unsigned weight;
   Attributes(unsigned hp, unsigned range, unsigned attack_power, unsigned speed,
-             unsigned price, unsigned is_aerial);
+             unsigned price, unsigned is_aerial, unsigned weight);
 };
 
 struct Constants {
@@ -25,6 +26,7 @@ static inline size_t NO_OF_DEFENDER_TYPES;
 static inline size_t NO_OF_ATTACKER_TYPES;
 static inline size_t NO_OF_TURNS;
 static inline size_t MAX_NO_OF_COINS;
+static inline size_t PVP_FIXED_COINS = 100;
 
 static inline std::unordered_map<size_t, Attributes> ATTACKER_TYPE_ATTRIBUTES;
 static inline std::unordered_map<size_t, Attributes> DEFENDER_TYPE_ATTRIBUTES;

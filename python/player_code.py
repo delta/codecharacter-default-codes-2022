@@ -98,6 +98,7 @@ class Constants:
     DEFENDER_TYPE_ATTRIBUTES: dict[int, DefenderType]
     MAP_NO_OF_ROWS: int
     MAP_NO_OF_COLS: int
+    PVP_FIXED_COINS: int = 1000
 
     @classmethod
     def initialize(cls):
