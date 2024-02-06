@@ -1,14 +1,11 @@
 import sys
-from player_code import Position, Attacker, Defender, Constants, Map, State, Game, PvPState
+from player_code import Position, Attacker, Defender, Constants, Map, State, Game, PvPState, GameType
 from run import run
 from runpvp import run_pvp
-from enum import Enum
+
 
 all_logs: str = ""
 
-class GameType(Enum):
-    NORMAL = 1
-    PVP = 2
 
 def string_to_game_type(game_type_str) -> GameType:
     if game_type_str.lower() == "normal":
@@ -77,9 +74,7 @@ def next_pvp_state(cur_turn_no: int) -> PvPState:
             Attacker(id, hp, Constants.DEFENDER_TYPE_ATTRIBUTES[d_type], Position(x, y))
         )
 
-    no_of_coins_left = int(sys.stdin.readline())
-
-    return PvPState(attackers, opponent_attackers, no_of_coins_left, cur_turn_no + 1)
+    return PvPState(attackers, opponent_attackers, Constants.PVP_FIXED_COINS, cur_turn_no + 1)
 
 
 if len(sys.argv) < 2:
@@ -88,7 +83,7 @@ if len(sys.argv) < 2:
 
 game_type = string_to_game_type(sys.argv[1])
 
-Constants.initialize()
+Constants.initialize(game_type)
 
 if game_type == GameType.NORMAL:
     Map.initialize()
@@ -105,7 +100,7 @@ if game_type == GameType.NORMAL:
         output(state, game)
 
 elif game_type == GameType.PVP:
-    state = PvPState([], [], Constants.MAX_NO_OF_COINS, 0)
+    state = PvPState([], [], Constants.PVP_FIXED_COINS, 0)
 
     game = run_pvp(state)
 

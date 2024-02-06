@@ -62,9 +62,7 @@ public class Main {
                     new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt())));
         }
 
-        int coinsLeft = in.nextInt();
-
-        return new PvPState(attackers, opponentAttackers, coinsLeft, currentTurnNo + 1);
+        return new PvPState(attackers, opponentAttackers, Constants.PVP_FIXED_COINS, currentTurnNo + 1);
     }
 
     private static GameMap getInitialMap() {
@@ -115,20 +113,24 @@ public class Main {
         GameType gameType = stringToGameType(args[0]);
 
         Constants.NO_OF_TURNS = in.nextInt();
-        Constants.MAX_NO_OF_COINS = in.nextInt();
-
+        if(gameType == GameType.PVP) {
+            Constants.PVP_FIXED_COINS = in.nextInt();
+        }
+        else{
+            Constants.MAX_NO_OF_COINS = in.nextInt();
+        }
         Constants.NO_OF_ATTACKER_TYPES = in.nextInt();
         Constants.ATTACKER_TYPE_ATTRIBUTES = new HashMap<Integer, Attributes>();
         for (int i = 1; i <= Constants.NO_OF_ATTACKER_TYPES; i++) {
             Constants.ATTACKER_TYPE_ATTRIBUTES.put(i,
-                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
+                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
         }
 
         Constants.NO_OF_DEFENDER_TYPES = in.nextInt();
         Constants.DEFENDER_TYPE_ATTRIBUTES = new HashMap<Integer, Attributes>();
         for (int i = 1; i <= Constants.NO_OF_DEFENDER_TYPES; i++) {
             Constants.DEFENDER_TYPE_ATTRIBUTES.put(i,
-                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
+                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(),0));
         }
 
         switch (gameType) {
@@ -155,7 +157,7 @@ public class Main {
             
             case PVP:
 
-                PvPState pvpState = new PvPState(new ArrayList<>(), new ArrayList<>(), Constants.MAX_NO_OF_COINS, 0);
+                PvPState pvpState = new PvPState(new ArrayList<>(), new ArrayList<>(), Constants.PVP_FIXED_COINS, 0);
                 RunPvP runPvP = new RunPvP();
                 Game pvpGame = runPvP.run(pvpState);
                 output(pvpState.getTurnNo(), pvpGame);

@@ -1,5 +1,10 @@
 from dataclasses import dataclass
 import sys
+from enum import Enum
+
+class GameType(Enum):
+    NORMAL = 1
+    PVP = 2
 
 
 @dataclass(eq=True, frozen=True, order=True)
@@ -23,6 +28,7 @@ class ActorType:
 @dataclass(frozen=True)
 class AttackerType(ActorType):
     speed: int
+    weight: int
 
 
 @dataclass(frozen=True)
@@ -101,16 +107,19 @@ class Constants:
     PVP_FIXED_COINS: int = 1000
 
     @classmethod
-    def initialize(cls):
+    def initialize(cls,game_type:GameType):
         cls.MAP_NO_OF_ROWS = 64
         cls.MAP_NO_OF_COLS = 64
-        cls.NO_OF_TURNS, cls.MAX_NO_OF_COINS = map(int, input().split())
+        if game_type == GameType.PVP:
+            cls.NO_OF_TURNS, cls.PVP_FIXED_COINS = map(int, input().split())
+        else:
+            cls.NO_OF_TURNS, cls.MAX_NO_OF_COINS = map(int, input().split())
         cls.NO_OF_ATTACKER_TYPES = int(input())
         cls.ATTACKER_TYPE_ATTRIBUTES = {}
         for i in range(1, cls.NO_OF_ATTACKER_TYPES + 1):
-            hp, a_range, attack_power, speed, price, is_aerial = map(int, input().split())
+            hp, a_range, attack_power, speed, price, is_aerial, weight = map(int, input().split())
             cls.ATTACKER_TYPE_ATTRIBUTES[i] = AttackerType(
-                hp, a_range, attack_power, price, is_aerial, speed
+                hp, a_range, attack_power, price, is_aerial, speed, weight
             )
 
         cls.NO_OF_DEFENDER_TYPES = int(input())

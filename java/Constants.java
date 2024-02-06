@@ -7,6 +7,7 @@ public class Constants {
     public static int NO_OF_ATTACKER_TYPES;
     public static int NO_OF_TURNS;
     public static int MAX_NO_OF_COINS;
+    public static int PVP_FIXED_COINS;
 
     public static Map<Integer, Attributes> ATTACKER_TYPE_ATTRIBUTES;
     public static Map<Integer, Attributes> DEFENDER_TYPE_ATTRIBUTES;
