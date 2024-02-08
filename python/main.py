@@ -97,7 +97,7 @@ if game_type == GameType.NORMAL:
     for i in range(Constants.NO_OF_TURNS):
         state = next_state(state.turn_no)
         game = run(state)
-        output(state, game)
+        output(state.turn_no, game)
 
 elif game_type == GameType.PVP:
     state = PvPState([], [], Constants.PVP_FIXED_COINS, 0)
