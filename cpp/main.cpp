@@ -2,16 +2,18 @@
 
 std::ostringstream all_logs;
 
+//make global object for holding all ids of attackers whose abilities activated
+
 void init_constants() {
   // All the attacker types
   std::cin >> Constants::NO_OF_ATTACKER_TYPES;
 
   std::unordered_map<size_t, Attributes> attacker_type_to_attributes;
   for (size_t i = 1; i <= Constants::NO_OF_ATTACKER_TYPES; i++) {
-    unsigned hp, range, attack_power, speed, price, is_aerial , weight;
-    std::cin >> hp >> range >> attack_power >> speed >> price >> is_aerial >> weight;
+    unsigned hp, range, attack_power, speed, price, is_aerial , weight, num_ability_turns, ability_activation_cost;
+    std::cin >> hp >> range >> attack_power >> speed >> price >> is_aerial >> weight >> num_ability_turns >> ability_activation_cost;
     attacker_type_to_attributes.insert(
-        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial,weight)));
+        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial,weight, num_ability_turns,ability_activation_cost)));
   }
   Constants::ATTACKER_TYPE_ATTRIBUTES = attacker_type_to_attributes;
 
@@ -23,7 +25,7 @@ void init_constants() {
     unsigned hp, range, attack_power, speed, price, is_aerial;
     std::cin >> hp >> range >> attack_power >> speed >> price >> is_aerial;
     defender_type_to_attributes.insert(
-        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial,0)));
+        std::make_pair(i, Attributes(hp, range, attack_power, speed, price, is_aerial,0,0,0)));
   }
   Constants::DEFENDER_TYPE_ATTRIBUTES = defender_type_to_attributes;
 }
@@ -47,6 +49,7 @@ void output(size_t turn_no, Game &game) {
   // Game details logged
   const auto &spawn_positions = game.get_spawn_positions();
   const auto &player_set_targets = game.get_player_set_targets();
+  const auto &ability_activations = game.get_ability_activations();
 
   std::cout << spawn_positions.size() << std::endl;
   for (const auto &entry : spawn_positions) {
@@ -57,6 +60,11 @@ void output(size_t turn_no, Game &game) {
   std::cout << player_set_targets.size() << std::endl;
   for (const auto &entry : player_set_targets) {
     std::cout << entry.first << " " << entry.second << std::endl;
+  }
+
+  std::cout << ability_activations.size() << std::endl;
+  for (const auto &attacker_id : ability_activations) {
+    std::cout << attacker_id << std::endl;
   }
 }
 
@@ -71,9 +79,9 @@ State next_state(size_t cur_turn_no) {
   std::cin >> no_of_active_attackers;
   std::vector<Attacker> attackers;
   for (size_t i = 0; i < no_of_active_attackers; i++) {
-    size_t id, hp, x, y, type;
-    std::cin >> id >> x >> y >> type >> hp;
-    attackers.push_back(Attacker(id, hp, type, Position(x, y)));
+    size_t id, hp, x, y, type, is_ability_active;
+    std::cin >> id >> x >> y >> type >> hp >> is_ability_active;
+    attackers.push_back(Attacker(id, hp, type, Position(x, y), is_ability_active));
   }
 
   std::cin >> no_of_active_defenders;
@@ -97,17 +105,17 @@ PvPState pvp_next_state(size_t cur_turn_no) {
   std::cin >> no_of_active_attackers;
   std::vector<Attacker> attackers;
   for (size_t i = 0; i < no_of_active_attackers; i++) {
-    size_t id, hp, x, y, type;
-    std::cin >> id >> x >> y >> type >> hp;
-    attackers.push_back(Attacker(id, hp, type, Position(x, y)));
+    size_t id, hp, x, y, type, is_ability_active;
+    std::cin >> id >> x >> y >> type >> hp >> is_ability_active;
+    attackers.push_back(Attacker(id, hp, type, Position(x, y), is_ability_active));
   }
 
   std::cin >> no_of_opponent_attackers;
   std::vector<Attacker> opponent_attackers;
   for (size_t i = 0; i < no_of_opponent_attackers; i++) {
-    size_t id, hp, x, y, type;
-    std::cin >> id >> x >> y >> type >> hp;
-    opponent_attackers.push_back(Attacker(id, hp, type, Position(x, y)));
+    size_t id, hp, x, y, type, is_ability_active;
+    std::cin >> id >> x >> y >> type >> hp >> is_ability_active;
+    opponent_attackers.push_back(Attacker(id, hp, type, Position(x, y), is_ability_active));
   }
 
   return {move(attackers), move(opponent_attackers), Constants::PVP_FIXED_COINS, cur_turn_no + 1};

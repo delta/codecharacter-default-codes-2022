@@ -89,6 +89,8 @@ def run(state: State) -> Game:
     #To do that you do
     if len(attackers)!=0 and len(defenders)!=0:
         game.set_target(attackers[0].id,defenders[0].id)
+        game.activate_ability(attackers[0].id)
+    
         
     #Lets log all the spawned positions for this turn
     for type_id, pos in game.spawn_positions:

@@ -32,7 +32,7 @@ public class Main {
         List<Attacker> attackers = new ArrayList<>();
         for (int i = 0; i < noOfActiveAttackers; i++) {
             attackers.add(
-                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt())));
+                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt()), in.nextInt()));
         }
 
         int noOfActiveDefenders = in.nextInt();
@@ -52,14 +52,14 @@ public class Main {
         List<Attacker> attackers = new ArrayList<>();
         for (int i = 0; i < noOfActiveAttackers; i++) {
             attackers.add(
-                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt())));
+                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt()), in.nextInt()));
         }
 
         int noOfActiveOpponentAttackers = in.nextInt();
         List<Attacker> opponentAttackers = new ArrayList<>();
         for (int i = 0; i < noOfActiveOpponentAttackers; i++) {
             opponentAttackers.add(
-                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt())));
+                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt()),in.nextInt()));
         }
 
         return new PvPState(attackers, opponentAttackers, Constants.PVP_FIXED_COINS, currentTurnNo + 1);
@@ -90,6 +90,7 @@ public class Main {
         }
 
         List<SpawnDetail> spawnPositions = game.getSpawnPositions();
+        List<Integer> abilityActivations = game.getAbilityActivations();
 
         System.out.println(spawnPositions.size());
         for (SpawnDetail entry : spawnPositions) {
@@ -100,6 +101,11 @@ public class Main {
         System.out.println(playerSetTargets.size());
         for (Map.Entry<Integer, Integer> entry : playerSetTargets.entrySet()) {
             System.out.println(entry.getKey() + " " + entry.getValue());
+        }
+
+        System.out.println(abilityActivations.size());
+        for (Integer attacker_id : abilityActivations) {
+            System.out.println(attacker_id);
         }
     }
 
@@ -123,14 +129,14 @@ public class Main {
         Constants.ATTACKER_TYPE_ATTRIBUTES = new HashMap<Integer, Attributes>();
         for (int i = 1; i <= Constants.NO_OF_ATTACKER_TYPES; i++) {
             Constants.ATTACKER_TYPE_ATTRIBUTES.put(i,
-                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
+                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
         }
 
         Constants.NO_OF_DEFENDER_TYPES = in.nextInt();
         Constants.DEFENDER_TYPE_ATTRIBUTES = new HashMap<Integer, Attributes>();
         for (int i = 1; i <= Constants.NO_OF_DEFENDER_TYPES; i++) {
             Constants.DEFENDER_TYPE_ATTRIBUTES.put(i,
-                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(),0));
+                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(),0,0,0));
         }
 
         switch (gameType) {
