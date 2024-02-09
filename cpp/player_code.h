@@ -15,8 +15,10 @@ struct Attributes {
   const unsigned price;
   const unsigned is_aerial;
   const unsigned weight;
+  const unsigned num_ability_turns;
+  const unsigned ability_activation_cost;
   Attributes(unsigned hp, unsigned range, unsigned attack_power, unsigned speed,
-             unsigned price, unsigned is_aerial, unsigned weight);
+             unsigned price, unsigned is_aerial, unsigned weight, unsigned num_ability_turns, unsigned ability_activation_cost);
 };
 
 struct Constants {
@@ -71,7 +73,8 @@ public:
 
 class Attacker : public Actor {
 public:
-  Attacker(size_t id, size_t hp, size_t type, Position pos);
+  Attacker(size_t id, size_t hp, size_t type, Position pos, size_t is_ability_active);
+  size_t is_ability_active;
 };
 
 class Defender : public Actor {
@@ -119,16 +122,19 @@ public:
   void set_target(size_t attacker_id, size_t defender_id);
   void set_target(const Attacker &attacker, const Defender &defender);
   void set_target(const Attacker &attacker, const Attacker &opponent);
+  void activate_ability(size_t attacker_id);
   std::ostringstream &logr();
 
   const std::unordered_map<size_t, size_t> &get_player_set_targets() const;
   const std::vector<std::pair<size_t, Position>> &get_spawn_positions() const;
   const std::set<Position> &get_already_spawned_positions() const;
+  const std::vector<size_t> &get_ability_activations() const;
 private:
   std::unordered_map<size_t, size_t> _player_set_targets;
   std::vector<std::pair<size_t, Position>> _spawn_postions;
   std::set<Position> _already_spawned_positions;
-  
+  std::vector<size_t> _ability_activations;
+
   std::ostringstream _logr;
 };
 

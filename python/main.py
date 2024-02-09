@@ -29,7 +29,10 @@ def output(turn_no: int, game: Game):
     sys.stdout.write(f"{len(game.player_set_targets)}\n")
     for (attacker_id, defender_id) in game.player_set_targets.items():
         sys.stdout.write(f"{attacker_id} {defender_id}\n")
-
+    
+    sys.stdout.write(f"{len(game.ability_activations)}\n")
+    for attacker_id in game.ability_activations:
+        sys.stdout.write(f"{attacker_id}\n")
 
 
 def next_state(cur_turn_no: int) -> State:
@@ -37,9 +40,9 @@ def next_state(cur_turn_no: int) -> State:
     attackers = []
 
     for _ in range(no_of_active_attackers):
-        id, x, y, a_type, hp = map(int, sys.stdin.readline().split())
+        id, x, y, a_type, hp, is_ability_active = map(int, sys.stdin.readline().split())
         attackers.append(
-            Attacker(id, hp, Constants.ATTACKER_TYPE_ATTRIBUTES[a_type], Position(x, y))
+            Attacker(id, hp, Constants.ATTACKER_TYPE_ATTRIBUTES[a_type], Position(x, y), is_ability_active)
         )
 
     no_of_active_defenders = int(sys.stdin.readline())
@@ -60,18 +63,18 @@ def next_pvp_state(cur_turn_no: int) -> PvPState:
     attackers = []
 
     for _ in range(no_of_active_attackers):
-        id, x, y, a_type, hp = map(int, sys.stdin.readline().split())
+        id, x, y, a_type, hp, is_ability_active = map(int, sys.stdin.readline().split())
         attackers.append(
-            Attacker(id, hp, Constants.ATTACKER_TYPE_ATTRIBUTES[a_type], Position(x, y))
+            Attacker(id, hp, Constants.ATTACKER_TYPE_ATTRIBUTES[a_type], Position(x, y), is_ability_active)
         )
 
     no_of_opponent_attackers = int(sys.stdin.readline())
     opponent_attackers = []
 
     for _ in range(no_of_opponent_attackers):
-        id, x, y, d_type, hp = map(int, sys.stdin.readline().split())
+        id, x, y, d_type, hp, is_ability_active = map(int, sys.stdin.readline().split())
         opponent_attackers.append(
-            Attacker(id, hp, Constants.DEFENDER_TYPE_ATTRIBUTES[d_type], Position(x, y))
+            Attacker(id, hp, Constants.DEFENDER_TYPE_ATTRIBUTES[d_type], Position(x, y), is_ability_active)
         )
 
     return PvPState(attackers, opponent_attackers, Constants.PVP_FIXED_COINS, cur_turn_no + 1)

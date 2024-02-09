@@ -10,9 +10,9 @@
 #include <vector>
 
 Attributes::Attributes(unsigned hp, unsigned range, unsigned attack_power,
-                       unsigned speed, unsigned price, unsigned is_aerial, unsigned weight)
+                       unsigned speed, unsigned price, unsigned is_aerial, unsigned weight, unsigned num_ability_turns, unsigned ability_activation_cost)
     : hp(hp), range(range), attack_power(attack_power), speed(speed),
-      price(price), is_aerial(is_aerial), weight(weight) {}
+      price(price), is_aerial(is_aerial), weight(weight), num_ability_turns(num_ability_turns), ability_activation_cost(ability_activation_cost) {}
 
 Position::Position(int x, int y) : _x(x), _y(y) {}
 
@@ -73,8 +73,8 @@ size_t Actor::get_hp() const { return _hp; }
 size_t Actor::get_type() const { return _type; }
 Position Actor::get_position() const { return _position; }
 
-Attacker::Attacker(size_t id, size_t hp, size_t type, Position pos)
-    : Actor(id, hp, type, pos) {}
+Attacker::Attacker(size_t id, size_t hp, size_t type, Position pos, size_t is_ability_active)
+    : Actor(id, hp, type, pos), is_ability_active(is_ability_active) {}
 
 Defender::Defender(size_t id, size_t hp, size_t type, Position pos)
     : Actor(id, hp, type, pos) {}
@@ -128,6 +128,10 @@ void Game::set_target(const Attacker &attacker, const Attacker &opponent) {
   this->_player_set_targets.insert({attacker.get_id(), opponent.get_id()});
 }
 
+void Game::activate_ability(size_t attacker_id) {
+  this->_ability_activations.push_back(attacker_id);
+}
+
 std::ostringstream &Game::logr() { return this->_logr; }
 
 const std::unordered_map<size_t, size_t> &Game::get_player_set_targets() const {
@@ -139,6 +143,10 @@ Game::get_spawn_positions() const {
 }
 const std::set<Position> &Game::get_already_spawned_positions() const {
   return this->_already_spawned_positions;
+}
+
+const std::vector<size_t> &Game::get_ability_activations() const {
+  return this->_ability_activations;
 }
 
 Map::Map(std::vector<std::vector<int>> map_as_grid)

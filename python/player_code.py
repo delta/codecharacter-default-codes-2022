@@ -29,6 +29,8 @@ class ActorType:
 class AttackerType(ActorType):
     speed: int
     weight: int
+    num_ability_turns: int
+    ability_activation_cost: int
 
 
 @dataclass(frozen=True)
@@ -42,6 +44,7 @@ class Attacker:
     hp: int
     type: AttackerType
     position: Position
+    is_ability_active: int
 
 
 @dataclass(frozen=True)
@@ -72,6 +75,7 @@ class Game:
         self.player_set_targets: dict[int, int] = {}
         self.spawn_positions: list[tuple[int, Position]] = []
         self.already_spawned_positions: set[Position] = set()
+        self.ability_activations: list[int] = []
 
     def spawn_attacker(self, id: int, position: Position):
         self.spawn_positions.append((id, position))
@@ -84,6 +88,10 @@ class Game:
         assert (type(attacker_id)== int)
         assert (type(defender_id)== int)
         self.player_set_targets[attacker_id] = defender_id
+
+    def activate_ability(self, attacker_id: int):
+        assert (type(attacker_id)== int)
+        self.ability_activations.append(attacker_id)
 
     def log(self, line: str):
         self._log += line + "\n"
@@ -117,9 +125,9 @@ class Constants:
         cls.NO_OF_ATTACKER_TYPES = int(input())
         cls.ATTACKER_TYPE_ATTRIBUTES = {}
         for i in range(1, cls.NO_OF_ATTACKER_TYPES + 1):
-            hp, a_range, attack_power, speed, price, is_aerial, weight = map(int, input().split())
+            hp, a_range, attack_power, speed, price, is_aerial, weight, num_ability_turns, ability_activation_cost = map(int, input().split())
             cls.ATTACKER_TYPE_ATTRIBUTES[i] = AttackerType(
-                hp, a_range, attack_power, price, is_aerial, speed, weight
+                hp, a_range, attack_power, price, is_aerial, speed, weight, num_ability_turns, ability_activation_cost
             )
 
         cls.NO_OF_DEFENDER_TYPES = int(input())
