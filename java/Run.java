@@ -95,6 +95,11 @@ public class Run {
         if (!attackers.isEmpty() && !defenders.isEmpty()) {
             // check if they are empty beforehand to be safe from unexpected errors
             game.setTarget(attackers.get(0).getId(), defenders.get(0).getId());
+             //lets say i want to activate the ability of the first attacker
+            //check if ability wasnt activated before to avoid getting penalized
+            if (!Game.already_activated_attacker_ids.contains(attackers.get(0).getId())) {
+                game.activateAbility(attackers.get(0).getId());
+            }
         }
 
         // Lets log all the spawned positions for this turn

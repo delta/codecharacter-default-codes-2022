@@ -130,6 +130,7 @@ void Game::set_target(const Attacker &attacker, const Attacker &opponent) {
 
 void Game::activate_ability(size_t attacker_id) {
   this->_ability_activations.push_back(attacker_id);
+  this-> already_activated_attacker_ids.insert(attacker_id);
 }
 
 std::ostringstream &Game::logr() { return this->_logr; }

@@ -28,7 +28,7 @@ public class RunPvP {
         int remainingCoins = state.getCoinsLeft();
         game.log("TURN " + state.getTurnNo() + " LOGS:");
 
-        // Get all the attackers and defenders in the game and store it
+        // Get all the attackers and opponent in the game and store it
         List<Attacker> attackers = state.getAttackers();
         List<Attacker> opponentAttackers = state.getOpponentAttackers();
 
@@ -91,6 +91,11 @@ public class RunPvP {
         if (!attackers.isEmpty() && !opponentAttackers.isEmpty()) {
             // check if they are empty beforehand to be safe from unexpected errors
             game.setTarget(attackers.get(0).getId(), opponentAttackers.get(0).getId());
+            //lets say i want to activate the ability of the first attacker
+            //check if ability wasnt activated before to avoid getting penalized
+            if (!Game.already_activated_attacker_ids.contains(attackers.get(0).getId())) {
+                game.activateAbility(attackers.get(0).getId());
+            }
         }
 
         // Lets log all the spawned positions for this turn

@@ -27,7 +27,7 @@ def run_pvp(state: PvPState) -> Game:
 
     game.log("TURN {} LOGS:\n".format(state.turn_no))
     
-    # Get all the attackers and defenders in the game and store it
+    # Get all the attackers and opponent attackers in the game and store it
     attackers = state.attackers
     opponent_attackers = state.opponent_attackers
     
@@ -85,6 +85,10 @@ def run_pvp(state: PvPState) -> Game:
     #To do that you do
     if len(attackers)!=0 and len(opponent_attackers)!=0:
         game.set_target(attackers[0].id,opponent_attackers[0].id)
+    #lets say i want to activate the ability of the first attacker
+    #check if ability wasnt activated before to avoid getting penalized
+        if attackers[0].id not in Game.already_activated_attacker_ids:
+            game.activate_ability(attackers[0].id)
         
     #Lets log all the spawned positions for this turn
     for type_id, pos in game.spawn_positions:

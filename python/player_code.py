@@ -70,6 +70,7 @@ class PvPState:
     turn_no: int
 
 class Game:
+    already_activated_attacker_ids: set[int]
     def __init__(self):
         self._log = ""
         self.player_set_targets: dict[int, int] = {}
@@ -92,6 +93,7 @@ class Game:
     def activate_ability(self, attacker_id: int):
         assert (type(attacker_id)== int)
         self.ability_activations.append(attacker_id)
+        Game.already_activated_attacker_ids.add(attacker_id)
 
     def log(self, line: str):
         self._log += line + "\n"
