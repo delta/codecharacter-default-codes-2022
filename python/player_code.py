@@ -70,7 +70,7 @@ class PvPState:
     turn_no: int
 
 class Game:
-    already_activated_attacker_ids: set[int]
+    already_activated_attacker_ids: set[int] = set()
     def __init__(self):
         self._log = ""
         self.player_set_targets: dict[int, int] = {}

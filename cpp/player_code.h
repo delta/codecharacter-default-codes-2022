@@ -129,7 +129,7 @@ public:
   const std::vector<std::pair<size_t, Position>> &get_spawn_positions() const;
   const std::set<Position> &get_already_spawned_positions() const;
   const std::vector<size_t> &get_ability_activations() const;
-  static std::set<size_t> already_activated_attacker_ids;
+  static inline std::set<size_t> already_activated_attacker_ids;
 private:
   std::unordered_map<size_t, size_t> _player_set_targets;
   std::vector<std::pair<size_t, Position>> _spawn_postions;

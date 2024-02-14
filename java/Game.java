@@ -11,7 +11,7 @@ public class Game {
     private final Set<Position> _alreadySpawnedPositions;
     private final StringBuilder _logr;
     private final List<Integer> _ability_activations;
-    public static Set<Integer> already_activated_attacker_ids;
+    public static Set<Integer> already_activated_attacker_ids = new HashSet<>();
 
     public Game() {
         _playerSetTargets = new HashMap<>();
@@ -27,8 +27,8 @@ public class Game {
     }
 
     public void activateAbility(int attacker_id) {
-        _ability_activations.add(attacker_id);
         already_activated_attacker_ids.add(attacker_id);
+        _ability_activations.add(attacker_id);
     }
 
     public List<SpawnDetail> getSpawnPositions() {
