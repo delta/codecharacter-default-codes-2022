@@ -1,5 +1,10 @@
 from dataclasses import dataclass
 import sys
+from enum import Enum
+
+class GameType(Enum):
+    NORMAL = 1
+    PVP = 2
 
 
 @dataclass(eq=True, frozen=True, order=True)
@@ -23,6 +28,9 @@ class ActorType:
 @dataclass(frozen=True)
 class AttackerType(ActorType):
     speed: int
+    weight: int
+    num_ability_turns: int
+    ability_activation_cost: int
 
 
 @dataclass(frozen=True)
@@ -36,6 +44,7 @@ class Attacker:
     hp: int
     type: AttackerType
     position: Position
+    is_ability_active: int
 
 
 @dataclass(frozen=True)
@@ -53,13 +62,21 @@ class State:
     no_of_coins_left: int
     turn_no: int
 
+@dataclass(frozen=True)
+class PvPState:
+    attackers: list[Attacker]
+    opponent_attackers: list[Attacker]
+    no_of_coins_left: int
+    turn_no: int
 
 class Game:
+    already_activated_attacker_ids: set[int] = set()
     def __init__(self):
         self._log = ""
         self.player_set_targets: dict[int, int] = {}
         self.spawn_positions: list[tuple[int, Position]] = []
         self.already_spawned_positions: set[Position] = set()
+        self.ability_activations: list[int] = []
 
     def spawn_attacker(self, id: int, position: Position):
         self.spawn_positions.append((id, position))
@@ -72,6 +89,11 @@ class Game:
         assert (type(attacker_id)== int)
         assert (type(defender_id)== int)
         self.player_set_targets[attacker_id] = defender_id
+
+    def activate_ability(self, attacker_id: int):
+        assert (type(attacker_id)== int)
+        self.ability_activations.append(attacker_id)
+        Game.already_activated_attacker_ids.add(attacker_id)
 
     def log(self, line: str):
         self._log += line + "\n"
@@ -92,16 +114,22 @@ class Constants:
     DEFENDER_TYPE_ATTRIBUTES: dict[int, DefenderType]
     MAP_NO_OF_ROWS: int
     MAP_NO_OF_COLS: int
+    PVP_FIXED_COINS: int = 1000
 
     @classmethod
-    def initialize(cls):
-        cls.NO_OF_TURNS, cls.MAX_NO_OF_COINS = map(int, input().split())
+    def initialize(cls,game_type:GameType):
+        cls.MAP_NO_OF_ROWS = 64
+        cls.MAP_NO_OF_COLS = 64
+        if game_type == GameType.PVP:
+            cls.NO_OF_TURNS, cls.PVP_FIXED_COINS = map(int, input().split())
+        else:
+            cls.NO_OF_TURNS, cls.MAX_NO_OF_COINS = map(int, input().split())
         cls.NO_OF_ATTACKER_TYPES = int(input())
         cls.ATTACKER_TYPE_ATTRIBUTES = {}
         for i in range(1, cls.NO_OF_ATTACKER_TYPES + 1):
-            hp, a_range, attack_power, speed, price, is_aerial = map(int, input().split())
+            hp, a_range, attack_power, speed, price, is_aerial, weight, num_ability_turns, ability_activation_cost = map(int, input().split())
             cls.ATTACKER_TYPE_ATTRIBUTES[i] = AttackerType(
-                hp, a_range, attack_power, price, is_aerial, speed
+                hp, a_range, attack_power, price, is_aerial, speed, weight, num_ability_turns, ability_activation_cost
             )
 
         cls.NO_OF_DEFENDER_TYPES = int(input())

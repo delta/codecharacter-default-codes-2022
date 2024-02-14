@@ -89,7 +89,11 @@ def run(state: State) -> Game:
     #To do that you do
     if len(attackers)!=0 and len(defenders)!=0:
         game.set_target(attackers[0].id,defenders[0].id)
-        
+    #lets say i want to activate the ability of the first attacker
+    #check if ability wasnt activated before to avoid getting penalized
+        if attackers[0].id not in Game.already_activated_attacker_ids:
+            game.activate_ability(attackers[0].id)
+
     #Lets log all the spawned positions for this turn
     for type_id, pos in game.spawn_positions:
         game.log("Type {} at Position ({},{})".
