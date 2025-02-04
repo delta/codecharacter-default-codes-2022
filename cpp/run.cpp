@@ -85,6 +85,11 @@ Game run(const State &state) {
   if (!attackers.empty() && !defenders.empty()) {
     // check if they are empty beforehand to be safe from unexpected errors
     game.set_target(attackers.front(), defenders.front());
+    //lets say i want to activate the ability of the first attacker
+    //check if ability wasnt activated before to avoid getting penalized
+    if (!Game::already_activated_attacker_ids.contains(attackers.front().get_id())){
+      game.activate_ability(attackers.front().get_id());
+    }
   }
 
   // Lets log all the spawned positions for this turn

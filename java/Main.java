@@ -7,13 +7,32 @@ import java.util.Scanner;
 public class Main {
 
     private static final Scanner in = new Scanner(System.in);
+    
+    private static final StringBuilder allLogs = new StringBuilder();
+    
+    private enum GameType {
+        NORMAL,PVP
+    }
+
+    private static GameType stringToGameType(String gameType) {
+        switch (gameType.toLowerCase()) {
+            case "normal":
+                return GameType.NORMAL;
+            case "pvp":
+                return GameType.PVP;
+            default:
+                System.err.println("Usage: java Main [game-type]");
+                System.exit(1);
+        }
+        return GameType.NORMAL;
+    }
 
     private static State nextState(int currentTurnNo) {
         int noOfActiveAttackers = in.nextInt();
         List<Attacker> attackers = new ArrayList<>();
         for (int i = 0; i < noOfActiveAttackers; i++) {
             attackers.add(
-                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt())));
+                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt()), in.nextInt()));
         }
 
         int noOfActiveDefenders = in.nextInt();
@@ -26,6 +45,24 @@ public class Main {
         int coinsLeft = in.nextInt();
 
         return new State(attackers, defenders, coinsLeft, currentTurnNo + 1);
+    }
+
+    private static PvPState nextPvPState(int currentTurnNo) {
+        int noOfActiveAttackers = in.nextInt();
+        List<Attacker> attackers = new ArrayList<>();
+        for (int i = 0; i < noOfActiveAttackers; i++) {
+            attackers.add(
+                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt()), in.nextInt()));
+        }
+
+        int noOfActiveOpponentAttackers = in.nextInt();
+        List<Attacker> opponentAttackers = new ArrayList<>();
+        for (int i = 0; i < noOfActiveOpponentAttackers; i++) {
+            opponentAttackers.add(
+                    new Attacker(in.nextInt(), in.nextInt(), in.nextInt(), new Position(in.nextInt(), in.nextInt()),in.nextInt()));
+        }
+
+        return new PvPState(attackers, opponentAttackers, Constants.PVP_FIXED_COINS, currentTurnNo + 1);
     }
 
     private static GameMap getInitialMap() {
@@ -42,17 +79,18 @@ public class Main {
         return new GameMap(grid);
     }
 
-    private static void output(State state, Game game) {
+    private static void output(int turnNo, Game game) {
 
         String log = game.getLog();
 
         if (!log.isEmpty()) {
-            System.err.println("TURN " + state.getTurnNo());
-            System.err.println(log);
-            System.err.println("ENDLOG");
+            allLogs.append("TURN " + turnNo + "\n");
+            allLogs.append(log + "\n");
+            allLogs.append("ENDLOG\n");
         }
 
         List<SpawnDetail> spawnPositions = game.getSpawnPositions();
+        List<Integer> abilityActivations = game.getAbilityActivations();
 
         System.out.println(spawnPositions.size());
         for (SpawnDetail entry : spawnPositions) {
@@ -64,41 +102,80 @@ public class Main {
         for (Map.Entry<Integer, Integer> entry : playerSetTargets.entrySet()) {
             System.out.println(entry.getKey() + " " + entry.getValue());
         }
+
+        System.out.println(abilityActivations.size());
+        for (Integer attacker_id : abilityActivations) {
+            System.out.println(attacker_id);
+        }
     }
 
     public static void main(String[] args) {
-        Constants.NO_OF_TURNS = in.nextInt();
-        Constants.MAX_NO_OF_COINS = in.nextInt();
 
+        if(args.length < 1) {
+            System.err.println("Usage: java Main [game-type]");
+            System.exit(1);
+        }
+
+        GameType gameType = stringToGameType(args[0]);
+
+        Constants.NO_OF_TURNS = in.nextInt();
+        if(gameType == GameType.PVP) {
+            Constants.PVP_FIXED_COINS = in.nextInt();
+        }
+        else{
+            Constants.MAX_NO_OF_COINS = in.nextInt();
+        }
         Constants.NO_OF_ATTACKER_TYPES = in.nextInt();
         Constants.ATTACKER_TYPE_ATTRIBUTES = new HashMap<Integer, Attributes>();
         for (int i = 1; i <= Constants.NO_OF_ATTACKER_TYPES; i++) {
             Constants.ATTACKER_TYPE_ATTRIBUTES.put(i,
-                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
+                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
         }
 
         Constants.NO_OF_DEFENDER_TYPES = in.nextInt();
         Constants.DEFENDER_TYPE_ATTRIBUTES = new HashMap<Integer, Attributes>();
         for (int i = 1; i <= Constants.NO_OF_DEFENDER_TYPES; i++) {
             Constants.DEFENDER_TYPE_ATTRIBUTES.put(i,
-                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
+                    new Attributes(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(),0,0,0));
         }
 
-        GameMap map = getInitialMap();
-        List<Defender> defenders = map.spawnDefenders();
+        switch (gameType) {
 
-        State state = new State(new ArrayList<>(), defenders, Constants.MAX_NO_OF_COINS, 0);
+            case NORMAL:
+                
+                GameMap map = getInitialMap();
+                List<Defender> defenders = map.spawnDefenders();
 
-        Run run = new Run();
-        Game game = run.run(state);
-        output(state, game);
+                State state = new State(new ArrayList<>(), defenders, Constants.MAX_NO_OF_COINS, 0);
 
-        for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
-            state = nextState(state.getTurnNo());
-            game = run.run(state);
-            output(state, game);
+                Run run = new Run();
+                Game game = run.run(state);
+                output(state.getTurnNo(), game);
+
+                for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
+                    state = nextState(state.getTurnNo());
+                    game = run.run(state);
+                    output(state.getTurnNo(), game);
+                }
+
+                in.close();
+                break;
+            
+            case PVP:
+
+                PvPState pvpState = new PvPState(new ArrayList<>(), new ArrayList<>(), Constants.PVP_FIXED_COINS, 0);
+                RunPvP runPvP = new RunPvP();
+                Game pvpGame = runPvP.run(pvpState);
+                output(pvpState.getTurnNo(), pvpGame);
+
+                for (int i = 0; i < Constants.NO_OF_TURNS; i++) {
+                    pvpState = nextPvPState(pvpState.getTurnNo());
+                    pvpGame = runPvP.run(pvpState);
+                    output(pvpState.getTurnNo(), pvpGame);
+                }
+                break; 
         }
 
-        in.close();
+        System.err.println(allLogs.toString());
     }
 }

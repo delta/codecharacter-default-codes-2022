@@ -14,17 +14,21 @@ struct Attributes {
   const unsigned speed;
   const unsigned price;
   const unsigned is_aerial;
+  const unsigned weight;
+  const unsigned num_ability_turns;
+  const unsigned ability_activation_cost;
   Attributes(unsigned hp, unsigned range, unsigned attack_power, unsigned speed,
-             unsigned price, unsigned is_aerial);
+             unsigned price, unsigned is_aerial, unsigned weight, unsigned num_ability_turns, unsigned ability_activation_cost);
 };
 
 struct Constants {
-static inline size_t MAP_NO_OF_ROWS;
-static inline size_t MAP_NO_OF_COLS;
+static inline size_t MAP_NO_OF_ROWS = 64;
+static inline size_t MAP_NO_OF_COLS = 64;
 static inline size_t NO_OF_DEFENDER_TYPES;
 static inline size_t NO_OF_ATTACKER_TYPES;
 static inline size_t NO_OF_TURNS;
 static inline size_t MAX_NO_OF_COINS;
+static inline size_t PVP_FIXED_COINS = 100;
 
 static inline std::unordered_map<size_t, Attributes> ATTACKER_TYPE_ATTRIBUTES;
 static inline std::unordered_map<size_t, Attributes> DEFENDER_TYPE_ATTRIBUTES;
@@ -69,7 +73,8 @@ public:
 
 class Attacker : public Actor {
 public:
-  Attacker(size_t id, size_t hp, size_t type, Position pos);
+  Attacker(size_t id, size_t hp, size_t type, Position pos, size_t is_ability_active);
+  size_t is_ability_active;
 };
 
 class Defender : public Actor {
@@ -94,23 +99,44 @@ private:
   std::vector<Defender> _defenders;
 };
 
-class Game {
-  std::unordered_map<size_t, size_t> _player_set_targets;
-  std::vector<std::pair<size_t, Position>> _spawn_postions;
-  std::set<Position> _already_spawned_positions;
-  std::ostringstream _logr;
+class PvPState {
+public:
+  PvPState(std::vector<Attacker> attackers,std::vector<Attacker> opponent_attackers, size_t no_of_coins_left, size_t turn_no);
 
+  const std::vector<Attacker> &get_attackers() const;
+  const std::vector<Attacker> &get_opponent_attackers() const;
+  size_t get_turn_no() const;
+  size_t get_coins_left() const;
+private:
+  size_t _turn_no;
+  size_t _no_of_coins_left;
+  std::vector<Attacker> _attackers;
+  std::vector<Attacker> _opponent_attackers;
+};
+
+class Game {
 public:
   Game();
   void spawn_attacker(size_t id, Position pos);
   bool already_spawned_at_position(Position pos);
   void set_target(size_t attacker_id, size_t defender_id);
   void set_target(const Attacker &attacker, const Defender &defender);
+  void set_target(const Attacker &attacker, const Attacker &opponent);
+  void activate_ability(size_t attacker_id);
   std::ostringstream &logr();
 
   const std::unordered_map<size_t, size_t> &get_player_set_targets() const;
   const std::vector<std::pair<size_t, Position>> &get_spawn_positions() const;
   const std::set<Position> &get_already_spawned_positions() const;
+  const std::vector<size_t> &get_ability_activations() const;
+  static inline std::set<size_t> already_activated_attacker_ids;
+private:
+  std::unordered_map<size_t, size_t> _player_set_targets;
+  std::vector<std::pair<size_t, Position>> _spawn_postions;
+  std::set<Position> _already_spawned_positions;
+  std::vector<size_t> _ability_activations;
+
+  std::ostringstream _logr;
 };
 
 class Map {
@@ -121,13 +147,14 @@ public:
 
   [[nodiscard]] std::vector<Defender> spawn_defenders() const;
 
-  static inline size_t no_of_rows;
-  static inline size_t no_of_cols;
+  static inline size_t no_of_rows = 64;
+  static inline size_t no_of_cols = 64;
 
 private:
   std::vector<std::vector<int>> _grid;
 };
 
 Game run(const State &state);
+Game run(const PvPState &state);
 
 #define logger game.logr()
